@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "3ds.h": "c",
+        "vshader_shbin.h": "c",
+        "citro3d.h": "c",
+        "types.h": "c",
+        "renderqueue.h": "c"
+    }
+}
