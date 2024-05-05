@@ -1,0 +1,6 @@
+--atlas -f rgba8888 -z auto
+ball-white.png
+ball-red.png
+ball-green.png
+ball-blue.png
+ducky.png

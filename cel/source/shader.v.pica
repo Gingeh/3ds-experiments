@@ -1,0 +1,22 @@
+; constants
+.constf ones(1.0, 1.0, 1.0, 1.0)
+
+; outputs
+.out outpos position
+.out outtc0 texcoord0
+.out outnrm normalquat ; not actually a quaternion, hopefully this doesn't break anything
+
+; input aliases
+.alias inpos v0
+.alias intex v1
+.alias innrm v2
+
+.entry vmain
+.proc vmain
+	; pass everything through to the geoshader
+	mov outpos.xyz, inpos
+	mov outpos.w, ones
+	mov outtc0, intex
+	mov outnrm, innrm
+	end
+.end

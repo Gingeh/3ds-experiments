@@ -1,0 +1,84 @@
+.gsh point c0
+
+; uniforms
+.fvec projection[4], modelView[4]
+
+; constants
+.constf const(0.0, 1.0, 0.0, 0.0)
+.alias  black const.xxxy
+.alias  white const.yyyy
+.constf dilate(0.1, 0.1, 0.1, 0.0) ; TODO: make this a uniform
+
+; output
+.out outpos position
+.out outtc0 texcoord0
+.out outclr color
+
+; inputs (no aliases because there's so many)
+; v0-v2: pos/tc0/nrm 1st vert
+; v3-v5: pos/tc0/nrm 2nd vert
+; v6-v8: pos/tc0/nrm 3rd vert
+
+.entry gmain
+.proc gmain
+    ; store and emit the regular verts
+    mov r2, v0
+    mov r3, v3
+    mov r4, v6
+    mov r6, white
+    call emitTri
+
+    ; add scaled normals to a copy of each vert
+    mad r5, v2, dilate, r2
+    mad r2, v5, dilate, r3
+    mad r4, v8, dilate, r4
+    mov r3, r5
+
+    ; emit these as a black triangle
+    mov r6, black
+    call emitTri
+
+    end
+.end
+
+; input:    r2-4, v1, v4, v7
+; clobbers: r0, r1
+.proc emitTri
+    setemit 0
+    mov r0, r2
+    call transform
+    mov outpos, r0
+    mov outtc0, v1
+    mov outclr, r6
+    emit
+
+    setemit 1
+    mov r0, r3
+    call transform
+    mov outpos, r0
+    mov outtc0, v4
+    mov outclr, r6
+    emit
+
+    setemit 2, prim
+    mov r0, r4
+    call transform
+    mov outpos, r0
+    mov outtc0, v7
+    mov outclr, r6
+    emit
+.end
+
+; input:    r0
+; output:   r0
+; clobbers: r1
+.proc transform
+    dp4 r1.x, modelView[0], r0
+    dp4 r1.y, modelView[1], r0
+    dp4 r1.z, modelView[2], r0
+    dp4 r1.w, modelView[3], r0
+    dp4 r0.x, projection[0], r1
+    dp4 r0.y, projection[1], r1
+    dp4 r0.z, projection[2], r1
+    dp4 r0.w, projection[3], r1
+.end
